@@ -1,4 +1,6 @@
+import axios from "axios"
 import { FC } from "react"
+import { useHistory } from "react-router-dom"
 import { ITodoResponse } from "../../../models"
 import { COLORS } from "../../../shared/theme/colors"
 import { IconButton } from "../../atoms/icon-button"
@@ -12,6 +14,17 @@ export interface TodoProps {
 }
 
 export const Todo: FC<TodoProps> = ({ todo, isEven, toggleComplete = () => {} , deleteTodo = () => {} }) => {
+  const history = useHistory()
+
+  const handleDelete = async () => {
+    axios.delete(`https://bp-todolist.herokuapp.com/${todo.id}`)
+    .then(res => {
+      console.log(res)
+      history.push('/')
+      window.location.reload()
+    })
+    .catch(err => console.error(err));
+  }
 
   return (
     <div className={`todo-wrapper todo-wrapper-${isEven ? 'even' : 'odd'}`}>
@@ -26,9 +39,9 @@ export const Todo: FC<TodoProps> = ({ todo, isEven, toggleComplete = () => {} , 
           </Typography>
         </div>
       </div>
-      <div className={`todo-wrapper-information`}>
+      <div className={`todo-wrapper-crud`}>
         <IconButton className="fa-solid fa-pencil"></IconButton>
-        <IconButton className="fa-solid fa-trash-can" ></IconButton>
+        <IconButton onClick={handleDelete} className="fa-solid fa-trash-can" ></IconButton>
       </div>
     </div>
   )
